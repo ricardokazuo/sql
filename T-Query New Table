@@ -1,0 +1,37 @@
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Fact]') AND type in (N'U'))
+DROP TABLE [dbo].[Fact]
+GO
+
+CREATE TABLE [dbo].[Fact](
+	[Date]		[datetime] NOT NULL,
+	[Country]	[nvarchar](50) NULL,
+	[Forecast]	[float] NULL,
+	[Actuals]	[float] NULL
+) ON [PRIMARY]
+GO
+
+DECLARE @Actuals FLOAT 
+DECLARE @Forecast FLOAT
+DECLARE @MyDate DATE
+DECLARE @Country nvarchar(50)
+
+SET @Actuals = 1000.0 + floor(10000 * RAND(convert(varbinary, newid())))
+SET @MyDate = '2020-01-01'
+
+WHILE ( @MyDate <= GETDATE())
+BEGIN
+	SET @Actuals = 1000.0 + floor(10000 * RAND(convert(varbinary, newid())))
+	SET @Forecast = @Actuals + (@Actuals * (ABS(CHECKSUM(NEWID()) % (0.50 - (-0.50 ) + 0.5555)) + (-0.50 )))
+	SET @MyDate = DATEADD(DAY, 1, @MyDate)
+
+	IF floor(4 * RAND(convert(varbinary, newid()))) = 0
+	BEGIN SET @Country = 'Australia' END
+	IF floor(4 * RAND(convert(varbinary, newid()))) = 1
+	BEGIN SET @Country = 'Brazil' END
+	IF floor(4 * RAND(convert(varbinary, newid()))) = 2
+	BEGIN SET @Country = 'Canada' END
+	IF floor(4 * RAND(convert(varbinary, newid()))) = 3
+	BEGIN SET @Country = 'Denmark' END
+	insert into [dbo].[Fact] values (@MyDate, @Country, @Forecast, @Actuals) 
+END
+GO
