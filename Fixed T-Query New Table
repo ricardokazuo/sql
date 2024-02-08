@@ -1,0 +1,48 @@
+DROP TABLE [Stocks].[dbo].[Fact]
+GO
+CREATE TABLE [Stocks].[dbo].[Fact](
+	[Date]			[datetime] NOT NULL,
+	[Country]		[nvarchar](50) NULL,
+	[Forecast]		[float] NULL,
+	[Actuals]		[float] NULL,
+	[Multiplier]	[float] NULL,
+	[Rand]			[float] NULL
+) ON [PRIMARY]
+GO
+
+declare @Actuals float
+declare @Forecast float
+declare @MyDate date
+declare @Country nvarchar(50)
+declare @Multiplier float
+declare @Rand float
+
+set @MyDate = '2000-01-01'
+
+WHILE ( @MyDate <= GETDATE())
+BEGIN
+	SET @Multiplier = (ABS(CHECKSUM(NEWID()) % (0.50 - (-0.50 ) + 0.5555)) + (-0.50 ))
+	SET @Actuals = 1000.0 + floor(10000 * RAND(convert(varbinary, newid())))
+	SET @Forecast = @Actuals + (@Actuals * @Multiplier)
+	SET @MyDate = DATEADD(DAY, 1, @MyDate)
+	SET @Rand = Rand()
+
+	SET @Country = floor(6 * RAND(convert(varbinary, newid())))
+
+	IF @Country IS NOT NULL
+		insert into [Stocks].[dbo].[Fact] values (@MyDate, @Country, @Forecast, @Actuals, @Multiplier, @Rand) 
+END
+GO
+
+UPDATE [Stocks].[dbo].[Fact]
+SET [Country] = 
+	CASE 
+		WHEN [Country] = '0' THEN 'Australia'
+		WHEN [Country] = '1' THEN 'Brazil'
+		WHEN [Country] = '2' THEN 'Canada'
+		WHEN [Country] = '3' THEN 'Denmark'
+		WHEN [Country] = '4' THEN 'Estonia'
+		WHEN [Country] = '5' THEN 'France'
+	END
+
+--select * from [Stocks].[dbo].[Fact]
