@@ -70,3 +70,11 @@ IF OBJECT_ID('tempdb..#MyTempTableMax') IS NOT NULL
 DROP TABLE #MyTempTableMax;
 IF OBJECT_ID('tempdb..#FinalTable') IS NOT NULL
 DROP TABLE #FinalTable;
+
+;WITH cte AS (
+  SELECT*, 
+     row_number() OVER(PARTITION BY Date_Min, Min, Date_Max, Max ORDER BY Date_Min desc) AS [rn]
+  FROM Min_Max_Year_Month
+)
+delete from cte
+where rn > 1
