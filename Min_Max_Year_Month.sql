@@ -6,6 +6,21 @@ IF OBJECT_ID('tempdb..#MyTempTableMax') IS NOT NULL
 DROP TABLE #MyTempTableMax;
 IF OBJECT_ID('tempdb..#FinalTable') IS NOT NULL
 DROP TABLE #FinalTable;
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Min_Max_Year_Month]') AND type in (N'U'))
+DROP TABLE [dbo].[Min_Max_Year_Month]
+GO
+CREATE TABLE [dbo].[Min_Max_Year_Month](
+	[Ticker] [varchar](50) NULL,
+	[Year] [int] NULL,
+	[Month] [int] NULL,
+	[Date_Min] [datetime] NULL,
+	[Min] [float] NULL,
+	[Date_Max] [datetime] NULL,
+	[Max] [float] NULL
+) ON [PRIMARY]
+GO
+
 ;with cte as(
 select
 [Date]
