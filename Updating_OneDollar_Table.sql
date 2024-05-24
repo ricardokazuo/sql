@@ -32,8 +32,8 @@ BEGIN
 			set @Acum = @Acum;
 		IF @@FETCH_STATUS <> 0 BREAK;
 		IF @Diff <> 0 set @Acum = @Acum * ISNULL(@Diff, 0);
-
-		--insert into [dbo].[StockOneDollar] VALUES(@Ticker,@Close,@Date,@Diff,@Acum);
+		IF @Diff is not null
+			insert into [dbo].[StockOneDollar] VALUES(@Ticker,@Close,@Date,@Diff,@Acum);
 		PRINT @Ticker + ' '+ CAST(@Close as VARCHAR) + ' '+ CAST (@Date as VARCHAR) +  ' '+ CAST(@Diff as VARCHAR)  + ' '+ CAST(@Acum as VARCHAR)
 	END
 	CLOSE myCursor
