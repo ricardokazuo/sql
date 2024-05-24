@@ -1,4 +1,5 @@
-USE [Stocks] GO
+USE [Stocks]
+GO
 DECLARE @Symbol VARCHAR(20)
 DECLARE myCursorAllTicker CURSOR LOCAL FAST_FORWARD FOR 
 select distinct s.[Ticker] from Stocks_Float s 
@@ -31,7 +32,8 @@ BEGIN
 			set @Acum = @Acum;
 		IF @@FETCH_STATUS <> 0 BREAK;
 		IF @Diff <> 0 set @Acum = @Acum * ISNULL(@Diff, 0);
-		--insert into [dbo].[StockOneDollar] VALUES(@Ticker,@Close,@Date,@Diff,@PriceAcum);
+
+		--insert into [dbo].[StockOneDollar] VALUES(@Ticker,@Close,@Date,@Diff,@Acum);
 		PRINT @Ticker + ' '+ CAST(@Close as VARCHAR) + ' '+ CAST (@Date as VARCHAR) +  ' '+ CAST(@Diff as VARCHAR)  + ' '+ CAST(@Acum as VARCHAR)
 	END
 	CLOSE myCursor
